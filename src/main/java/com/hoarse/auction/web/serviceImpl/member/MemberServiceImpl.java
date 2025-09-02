@@ -14,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 
@@ -31,7 +33,7 @@ public class MemberServiceImpl implements MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final AuthService authService;
     private final JwtConfig jwtConfig;
-
+    private final PasswordEncoder passwordEncoder;
 
     // 회원가입
     @Override
@@ -81,13 +83,11 @@ public class MemberServiceImpl implements MemberService {
 
     // 사용자 정보 수정
     @Override
-    public MemberDto updateMember(Long memberId, MemberRequestDto requestDto, Member member) {
-        Member idMember = memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("유저 정보를 찾을 수 없습니다"));
-        if (!(idMember == member)) {
-            throw new AccessDeniedException("회원 정보가 일치하지 않습니다.");
-        }
+    public MemberDto updateMember( MemberRequestDto requestDto,String username) {
+        Member member = memberRepository.findByUsername(username);
+
         member.setName(requestDto.getName());
-        member.setPassword(requestDto.getPassword());
+        member.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         member.setPhone(requestDto.getPhone());
         memberRepository.save(member);
 

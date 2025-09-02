@@ -89,5 +89,4 @@ public class Member implements UserDetails {
     }
 
 
-
 }

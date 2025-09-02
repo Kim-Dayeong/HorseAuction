@@ -29,7 +29,7 @@ public class AuctionService {
     private final AuctionRoomRepository auctionRoomRepository;
 
     private final MemberRepository memberRepository;
-    private static final long AUCTION_DURATION = TimeUnit.MINUTES.toMillis(1); // 1분
+    public static final long AUCTION_DURATION = TimeUnit.MINUTES.toMillis(1); // 1분
 
 
     private final String REDIS_HOST;
@@ -76,7 +76,7 @@ public class AuctionService {
             return;
         }
 
-        Horse hoarse = auctionRoom.getHoarse();
+        Horse hoarse = auctionRoom.getHorse();
 
         try (Jedis jedis = getJedis()) {
             System.out.println("실행 분기 테스트");
