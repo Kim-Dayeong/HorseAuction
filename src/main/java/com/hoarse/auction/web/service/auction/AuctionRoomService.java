@@ -56,6 +56,9 @@ public class AuctionRoomService {
     public AuctionRoom createRoom(String roomName, String horseNum, String username) {
         Horse horse = horseRepository.findByuniqueNum(horseNum);
         Member member = memberRepository.findByUsername(username);
+        if (member == null) {
+            throw new BadCredentialsException("사용자 정보를 찾을 수 없습니다.");
+        }
         AuctionRoom auctionRoom =AuctionRoom.create(roomName, horse, member);
 
         auctionRoomRepository.save(auctionRoom); // 채팅방 저장

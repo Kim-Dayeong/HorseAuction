@@ -8,6 +8,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
@@ -16,12 +17,16 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
+    private final RedisConnectionFactory redisConnectionFactory;
     @Value("${redis.host}")
     private String host;
 
     @Value("${redis.port}")
     private int port;
 
+    public RedisConfig(RedisConnectionFactory redisConnectionFactory) {
+        this.redisConnectionFactory = redisConnectionFactory;
+    }
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
@@ -39,7 +44,10 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
     }
-
+    @Bean
+    public StringRedisTemplate stringRedisTemplate() {
+        return new StringRedisTemplate(redisConnectionFactory);
+    }
 //    //리스너 어댑터 설정
 //    @Bean
 //    MessageListenerAdapter messageListenerAdapter() {

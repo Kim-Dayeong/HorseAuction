@@ -2,7 +2,7 @@ package com.hoarse.auction.web.controller.auction;
 
 import com.hoarse.auction.web.entity.auction.AuctionRoom;
 import com.hoarse.auction.web.service.auction.AuctionRoomService;
-import com.hoarse.auction.web.serviceImpl.member.TokenService;
+import com.hoarse.auction.web.serviceImpl.member.MemberTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuctionRoomController {
 
     private final AuctionRoomService auctionRoomService;
-    private final TokenService tokenService;
+    private final MemberTokenService memberTokenService;
 
 
     @Operation(summary = "경매방 생성 API")
@@ -29,7 +29,7 @@ public class AuctionRoomController {
             @RequestParam String hoarseId, HttpServletRequest request) {
 
 
-        return auctionRoomService.createRoom(roomName, hoarseId,tokenService.getUsername(request));
+        return auctionRoomService.createRoom(roomName, hoarseId, memberTokenService.getUsername(request));
     }
 
     //로그인 사용자 정보 가져오기

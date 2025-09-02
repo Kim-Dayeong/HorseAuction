@@ -1,6 +1,7 @@
 package com.hoarse.auction.web.controller.member;
 
 import com.hoarse.auction.web.config.jwt.JwtConfig;
+import com.hoarse.auction.web.config.security.SecurityUser;
 import com.hoarse.auction.web.dto.horse.HorseResponseDto;
 import com.hoarse.auction.web.dto.jwt.JwtResponseDTO;
 import com.hoarse.auction.web.dto.member.LoginDto;
@@ -19,11 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.security.SecurityUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Collections;
@@ -33,7 +35,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
 @RestController
-@RequestMapping("api/member")
+@RequestMapping("api/members")
 @RequiredArgsConstructor
 @Tag(name = "회원 API")
 public class MemberController {
@@ -73,17 +75,15 @@ public class MemberController {
 
     //회원 수정
     @Operation(summary = "회원정보 수정")
-    @PutMapping("/update")
-    public ResponseEntity updateMember(MemberRequestDto memberRequestDto){
+    @PutMapping("")
+    public ResponseEntity updateMember(MemberRequestDto memberRequestDto,
+                                       @AuthenticationPrincipal SecurityUser principal){
 
-        // 로그인 회원정보 일치 확인
-        if(!SecurityUtil.getCurrentUsername().equals(memberRequestDto.getUsername())){
-            log.warn("잘못된 회원 id로 접근하였습니다.");
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
+        String username = principal.getUsername(); //로그인 정보 가져오기
+
         // 회원정보 수정
         memberRequestDto.setPassword(passwordEncoder.encode(memberRequestDto.getPassword()));
-        memberService.updateMember(memberRequestDto, SecurityUtil.getCurretnUsername());
+        memberService.updateMember(memberRequestDto, username);
         return new ResponseEntity(HttpStatus.OK);
 
     }

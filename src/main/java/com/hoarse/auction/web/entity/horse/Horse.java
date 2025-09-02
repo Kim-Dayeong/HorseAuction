@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
 @Entity(name = "Horse")
 public class Horse {
 

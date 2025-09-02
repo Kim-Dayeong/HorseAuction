@@ -16,7 +16,7 @@ public interface MemberService {
 
     List<MemberDto> findAll();
 
-    MemberDto updateMember(Long memberId, MemberRequestDto requestDto, Member member);
+    MemberDto updateMember( MemberRequestDto requestDto, String username);
 
    void deleteMember(String token);
 }

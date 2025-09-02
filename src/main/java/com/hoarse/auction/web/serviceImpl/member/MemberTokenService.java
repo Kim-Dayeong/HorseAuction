@@ -4,8 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 
+
 @Service
-public class TokenService {
+public class MemberTokenService {
 
 
     // 로그인 사용자 정보 가져오기

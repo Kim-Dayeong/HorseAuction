@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.boot.model.source.internal.hbm.XmlElementMetadata;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,8 @@ import java.awt.print.PrinterGraphics;
 import java.security.Principal;
 import java.util.concurrent.TimeUnit;
 
+import static com.hoarse.auction.web.service.auction.AuctionService.AUCTION_DURATION;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +30,9 @@ public class AuctionMessageController {
     private final SimpMessageSendingOperations sendingOperations;
     private final AuctionService auctionService;
 
-    private static final long auctionDuringtime = TimeUnit.MINUTES.toMillis(1); // 1분
+    private final StringRedisTemplate stringRedisTemplate; // 주입받음
+
+    public static final long auctionDuringtime = TimeUnit.MINUTES.toMillis(1); // 1분
 
     private final JwtConfig jwtConfig;
     private final MemberRepository memberRepository;
@@ -58,10 +63,8 @@ public class AuctionMessageController {
 
     private void handleAuctionStart(AuctionMessage message){
         System.out.println("구문 이퀄 확인!!!");
-        try (Jedis jedis = new Jedis("localhost", 6379)){
-            jedis.set("endTime",String.valueOf(System.currentTimeMillis()+auctionDuringtime));
-
-        }
+        long endTime = System.currentTimeMillis() + AuctionService.AUCTION_DURATION;
+        stringRedisTemplate.opsForValue().set("endTime", String.valueOf(endTime));
     }
 
 }
